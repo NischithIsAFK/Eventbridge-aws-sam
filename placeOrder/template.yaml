@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+
+Resources:
+  PlaceOrderFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: app.handler
+      Runtime: nodejs20.x
+      Policies:
+        - Statement:
+            - Sid: EventBridgePutEvents
+              Effect: "Allow"
+              Action:
+                - "events:PutEvents"
+              Resource: "*"
+      Events:
+        PlaceOrderAPI:
+          Type: Api
+          Properties:
+            Path: /order
+            Method: POST
+
+Outputs:
+  TestingAPI:
+    Description: "API Gateway endpoint URL for Prod stage for Order function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/order"
